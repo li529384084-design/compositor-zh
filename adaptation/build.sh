@@ -1,13 +1,14 @@
 #!/bin/zsh
 # 编译 Compositor（macOS 14 适配版），错误归类输出。
-# 用法： ./build.sh [仓库根目录] [日志文件]
+# 用法： ./build.sh [仓库根目录] [日志文件] [配置(Debug/Release)]
 set -u
 REPO=${1:-$(cd "$(dirname "$0")/.." && pwd)}
 LOG=${2:-/tmp/compositor-build.log}
+CONFIG=${3:-Debug}
 cd "$REPO" || exit 1
-xcodebuild -project Compositor.xcodeproj -target Compositor -configuration Debug \
+xcodebuild -project Compositor.xcodeproj -target Compositor -configuration "$CONFIG" \
   SYMROOT="$REPO/build" OBJROOT="$REPO/build/obj" ONLY_ACTIVE_ARCH=YES \
-  CODE_SIGNING_ALLOWED=NO "$@" build > "$LOG" 2>&1
+  CODE_SIGNING_ALLOWED=NO build > "$LOG" 2>&1
 code=$?
 echo "exit=$code"
 echo "--- error 数量: $(grep -c 'error:' "$LOG") ---"
